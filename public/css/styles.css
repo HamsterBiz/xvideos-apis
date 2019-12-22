@@ -1,3 +1,22 @@
 body{
   text-align: center;
 }
+
+p{
+  margin: 0;
+  padding: 0;
+  color: rgb(0, 0, 0);
+}
+
+#content{
+  padding-bottom: 2rem;
+}
+
+.video{
+  margin: 1rem;
+  background: rgb(131, 178, 197);
+}
+
+a {
+  color: rgb(230, 55, 55);
+}

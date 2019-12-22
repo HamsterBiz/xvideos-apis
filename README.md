@@ -13,4 +13,5 @@
 
 - [x] Create static files.
 - [x] Fetch data from the server
+- [x] Add other pages e.g Dashboard
 - [ ] Page through the data
