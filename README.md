@@ -16,5 +16,5 @@
 - [x] Add other pages e.g dashboard, fresh and best
 - [x] Play and display details.
 - [x] Search for videos
+- [x] Loading spinners while waiting
 - [ ] Page through the pages
-- [ ] Loading spinners while waiting

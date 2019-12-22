@@ -1,4 +1,6 @@
 const content = document.querySelector('.content');
+const back = document.querySelector('.back');
+const next = document.querySelector('.next');
 
 const renderVideo = (json) => {
   const videoDiv = document.createElement('div');
@@ -123,4 +125,14 @@ const loadVideos = async () => {
   });
 };
 
+const handleBack = () => {
+  console.log('Back button pressed.');
+};
+
+const handleNext = () => {
+  console.log('Next button pressed.');
+};
+
 window.addEventListener('load', loadVideos);
+back.addEventListener('click', handleBack);
+next.addEventListener('click', handleNext);
