@@ -1,4 +1,4 @@
-const content = document.querySelector('#content');
+const content = document.querySelector('.content');
 
 const renderVideo = (json) => {
   console.log(json);
@@ -31,6 +31,8 @@ const renderVideo = (json) => {
 
   views.innerHTML = `Views ${json.views}`;
 
+  spinners.remove();
+
   videoDiv.appendChild(description);
   videoDiv.appendChild(video);
   videoDiv.appendChild(views);
@@ -41,6 +43,38 @@ const renderVideo = (json) => {
 const getVideoDetails = async (e) => {
   e.preventDefault();
   content.innerHTML = '';
+
+  const spinners = document.createElement('div');
+  spinners.innerHTML = `<div id="spinners">
+  <div class="spinner-grow text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-secondary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-success" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-danger" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-warning" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-info" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-light" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-dark" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>`;
+
+  spinners.className = 'spinners';
+
+  content.appendChild(spinners);
 
   const data = {
     url: e.target.href,
@@ -61,36 +95,59 @@ const getVideoDetails = async (e) => {
 };
 
 const loadDashboard = async () => {
+
+  const spinners = document.createElement('div');
+  spinners.innerHTML = `<div id="spinners">
+  <div class="spinner-grow text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-secondary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-success" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-danger" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-warning" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-info" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-light" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-dark" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>`;
+
+  spinners.className = 'spinners';
+
+  content.appendChild(spinners);
+
   const response = await fetch('/api/dashboard');
   const json = await response.json();
 
   const { videos } = json;
 
-  videos.forEach((video) => {
+  spinners.remove();
+
+  videos.forEach((video, index) => {
     // container for each video
     const container = document.createElement('div');
     container.className = 'video';
 
-    const channel = document.createElement('a');
-    channel.text = video.profile.name;
-    channel.href = video.profile.url;
-    channel.target = '__blank';
-
     // link to video
     const name = document.createElement('a');
-    name.text = video.title;
+    name.text = `[${index + 1}] -${video.title}`;
     name.href = video.url;
     name.target = '__blank';
     name.addEventListener('click', getVideoDetails);
 
-    // view for video
-    const views = document.createElement('p');
-    views.innerHTML = video.views.split('-').join('').trim();
-
-    container.appendChild(channel);
-    container.appendChild(document.createElement('br'));
     container.appendChild(name);
-    container.appendChild(views);
 
     content.appendChild(container);
   });

@@ -1,4 +1,4 @@
-const content = document.querySelector('#content');
+const content = document.querySelector('.content');
 
 const renderVideo = (json) => {
   const videoDiv = document.createElement('div');
@@ -17,10 +17,6 @@ const renderVideo = (json) => {
     const hls = new Hls();
     hls.loadSource(json.files.HLS);
     hls.attachMedia(video);
-    // // eslint-disable-next-line no-undef
-    video.addEventListener('play', () => {
-      hls.startLoad();
-    });
   }
 
   video.autoplay = false;
@@ -29,6 +25,8 @@ const renderVideo = (json) => {
 
   views.innerHTML = `Views ${json.views}`;
 
+  document.querySelector('#spinners').innerHTML = '';
+
   videoDiv.appendChild(description);
   videoDiv.appendChild(video);
   videoDiv.appendChild(views);
@@ -36,10 +34,46 @@ const renderVideo = (json) => {
   content.appendChild(videoDiv);
 };
 
+const loadSpinners = () => {
+  const spinners = document.createElement('div');
+  spinners.innerHTML = `<div id="spinners">
+  <div class="spinner-grow text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-secondary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-success" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-danger" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-warning" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-info" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-light" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="spinner-grow text-dark" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>`;
+
+  spinners.className = 'spinners';
+
+  content.appendChild(spinners);
+};
+
 const getVideoDetails = async (e) => {
   e.preventDefault();
 
   content.innerHTML = '';
+
+  loadSpinners();
 
   const videoUrl = e.target.href;
 
@@ -62,37 +96,28 @@ const getVideoDetails = async (e) => {
 };
 
 const loadVideos = async () => {
+  loadSpinners();
+
   const response = await fetch('/api/fresh');
   const json = await response.json();
 
   const { videos } = json;
 
-  videos.forEach((video) => {
+  document.querySelector('.content').innerHTML = '';
+
+  videos.forEach((video, index) => {
     // container for each video
     const container = document.createElement('div');
     container.className = 'video';
 
-    const channel = document.createElement('a');
-    channel.text = video.profile.name;
-    channel.href = video.profile.url;
-    channel.target = '__blank';
-
     // link to video
     const name = document.createElement('a');
-    name.text = video.title;
+    name.text = `[${index + 1}] - ${video.title}`;
     name.href = video.url;
     name.target = '__blank';
-    name.className = 'video_url';
     name.addEventListener('click', getVideoDetails);
 
-    // view for video
-    const views = document.createElement('p');
-    views.innerHTML = video.views.split('-').join('').trim();
-
-    container.appendChild(channel);
-    container.appendChild(document.createElement('br'));
     container.appendChild(name);
-    container.appendChild(views);
 
     content.appendChild(container);
   });

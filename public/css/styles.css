@@ -7,17 +7,17 @@ p{
   padding: 0;
 }
 
-#content{
-  padding-bottom: 2rem;
-}
-
-.video{
-  margin: 1rem;
-  background: rgb(131, 178, 197);
+.content{
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 a {
   color: rgb(230, 55, 55);
+}
+
+a:hover {
+  color: rgb(85, 147, 246);
 }
 
 .one_video{
@@ -25,6 +25,11 @@ a {
 }
 
 video {
-  padding: 2rem;
+  margin: 2rem;
   background-color: aliceblue;
+}
+
+.input-group{
+  padding: 2rem;
+  padding-bottom: 0;
 }
