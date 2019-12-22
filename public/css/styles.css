@@ -5,7 +5,6 @@ body{
 p{
   margin: 0;
   padding: 0;
-  color: rgb(0, 0, 0);
 }
 
 #content{
@@ -19,4 +18,13 @@ p{
 
 a {
   color: rgb(230, 55, 55);
+}
+
+.one_video{
+  margin: 2rem;
+}
+
+video {
+  padding: 2rem;
+  background-color: aliceblue;
 }
