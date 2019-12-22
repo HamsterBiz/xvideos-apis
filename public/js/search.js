@@ -1,4 +1,5 @@
-const content = document.querySelector('#content');
+const button = document.querySelector('.btn');
+const content = document.querySelector('.content');
 
 const renderVideo = (json) => {
   const videoDiv = document.createElement('div');
@@ -63,41 +64,44 @@ const getVideoDetails = async (e) => {
   renderVideo(json);
 };
 
-const loadBest = async () => {
-  const response = await fetch('/api/best');
-  const json = await response.json();
+const renderResult = (json) => {
+  json.forEach((item, index) => {
+    // index 0 is just garbage
+    if (index > 0) {
+      console.log(item);
 
-  const { videos } = json;
+      const container = document.createElement('div');
 
-  videos.forEach((video) => {
-    const container = document.createElement('div');
-    container.className = 'video';
+      const link = document.createElement('a');
+      link.href = item.url;
+      link.text = item.title;
+      link.addEventListener('click', getVideoDetails);
 
-    const channel = document.createElement('a');
-    channel.href = video.profile.url;
-    channel.text = video.profile.name;
-    channel.target = '__blank';
-
-    const name = document.createElement('a');
-    name.href = video.url;
-    name.text = video.title;
-    name.addEventListener('click', getVideoDetails);
-
-    const views = document.createElement('p');
-    views.innerHTML = video.views.split('-').join('').trim();
-
-    const duration = document.createElement('p');
-    duration.innerHTML = video.duration;
-
-    container.appendChild(channel);
-    container.appendChild(document.createElement('br'));
-    container.appendChild(name);
-    container.appendChild(views);
-    container.appendChild(duration);
-
-    content.appendChild(container);
+      container.appendChild(link);
+      content.appendChild(container);
+    }
   });
-
 };
 
-window.addEventListener('load', loadBest);
+const search = async () => {
+  const query = document.querySelector('.form-control').value;
+
+  const data = {
+    query,
+  };
+
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  };
+
+  const response = await fetch('/api/search', options);
+  const json = await response.json();
+
+  renderResult(json);
+};
+
+button.addEventListener('click', search);

@@ -1,7 +1,15 @@
 const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
+const Pornsearch = require('pornsearch');
 const xvideos = require('@rodrigogs/xvideos');
+
+// const searcher = new Pornsearch('deepthroat');
+
+// searcher.videos()
+//   .then((video) => {
+//     console.log(video);
+//   });
 
 require('dotenv').config();
 
@@ -11,6 +19,17 @@ app.use(morgan('tiny'));
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.post('/api/search', async (req, res) => {
+  const { query } = req.body;
+
+  const driver = 'xvideos';
+
+  const searcher = new Pornsearch(query, driver);
+
+  const response = await searcher.videos();
+  res.json(response);
+});
 
 app.post('/api/details', async (req, res) => {
   const url = req.body;
@@ -30,7 +49,6 @@ app.get('/api/dashboard', async (req, res) => {
 });
 
 app.get('/api/fresh', async (req, res) => {
-
   const fresh = await xvideos.videos.fresh({ page: 1 });
   res.json(fresh);
 });
