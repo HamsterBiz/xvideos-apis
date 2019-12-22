@@ -3,7 +3,9 @@ const path = require('path');
 const morgan = require('morgan');
 const xvideos = require('@rodrigogs/xvideos');
 
-const PORT = 3000;
+require('dotenv').config();
+
+const PORT = process.env.PORT || 80;
 const app = express();
 app.use(morgan('tiny'));
 
@@ -12,8 +14,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/api/details', async (req, res) => {
   const url = req.body;
-
-  console.log(url);
 
   const details = await xvideos.videos.details(url);
   res.json(details);
