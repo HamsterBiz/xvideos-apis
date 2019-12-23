@@ -38,15 +38,7 @@ app.post('/api/details', async (req, res) => {
   res.json(details);
 });
 
-<<<<<<< HEAD
-app.get('/api/best', async (req, res) => {
-  const year = new Date().getFullYear();
-  const month = new Date().getMonth();
 
-  console.log(year, month);
-
-  const bestList = await xvideos.videos.best({ year: year, month: month, page: 1 });
-=======
 app.post('/api/best', async (req, res) => {
   const year = new Date().getFullYear();
   const month = new Date().getMonth();
@@ -54,7 +46,6 @@ app.post('/api/best', async (req, res) => {
   const { page } = req.body;
 
   const bestList = await xvideos.videos.best({ year, month, page });
->>>>>>> navigator
   res.json(bestList);
 });
 
