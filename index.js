@@ -39,7 +39,12 @@ app.post('/api/details', async (req, res) => {
 });
 
 app.get('/api/best', async (req, res) => {
-  const bestList = await xvideos.videos.best({ year: '2019', month: '12', page: 1 });
+  const year = new Date().getFullYear();
+  const month = new Date().getMonth();
+
+  console.log(year, month);
+
+  const bestList = await xvideos.videos.best({ year: year, month: month, page: 1 });
   res.json(bestList);
 });
 
