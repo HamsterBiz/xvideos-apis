@@ -1,5 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Inria+Serif&display=swap');
+
 body{
+  font-family: 'Inria Serif', serif;
   text-align: center;
+  background-color: hsl(348, 72%, 41%);
+  padding-top: 0.2rem;
+  height: 100%;
+  display: block;
 }
 
 p{
@@ -8,16 +15,24 @@ p{
 }
 
 .content{
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: 0.2rem;
+  margin: 1rem;
+  border-radius: 0.5rem;
+  background-color: hsl(348, 69%, 56%);
+  box-shadow: 3px 3px 5px 6px hsl(348, 69%, 56%);
+}
+
+.video{
+  text-align: center;
+  font-size: 1rem;
 }
 
 a {
-  color: rgb(230, 55, 55);
+  color: aliceblue;
 }
 
 a:hover {
-  color: rgb(85, 147, 246);
+  color: rgb(231, 27, 112);
 }
 
 .one_video{
@@ -40,4 +55,34 @@ video {
 
 .buttons{
   margin: 1rem;
+  justify-content: center;
+}
+
+.navbar{
+  color: black;
+  font-size: 12;
+  border-radius: 0.5rem;
+}
+
+span{
+  text-align: center;
+  display: block;
+  margin: 1rem;
+  background-color: hsl(348, 57%, 39%);
+  box-shadow: 3px 3px 5px 6px hsl(348, 57%, 39%);
+  border-radius: 1rem;
+}
+
+nav{
+  background-color: hsl(348, 72%, 41%);
+  box-shadow: 3px 3px 5px 6px hsl(204, 86%, 53%);
+  margin: 1rem;
+  font-size: 2rem;
+}
+
+.title{
+  background: black;
+  margin: 1rem;
+  background-color: hsl(204, 86%, 53%);
+  box-shadow: 3px 3px 5px 6px hsl(204, 86%, 53%);
 }

@@ -152,22 +152,30 @@ const loadDashboard = async () => {
 
   spinners.remove();
 
-  videos.forEach((video, index) => {
+  const linkContainer = document.createElement('p');
+  const strong = document.createElement('strong');
+
+  videos.forEach((video) => {
     // container for each video
-    const container = document.createElement('div');
-    container.className = 'video';
+    // const container = document.createElement('div');
+    // container.className = 'video';
+
+    const span = document.createElement('span');
 
     // link to video
     const name = document.createElement('a');
-    name.text = `[${index + 1}] -${video.title}`;
+    name.text = video.title;
+    name.className = 'video';
     name.href = video.url;
     name.target = '__blank';
     name.addEventListener('click', getVideoDetails);
 
-    container.appendChild(name);
-
-    content.appendChild(container);
+    span.appendChild(name);
+    linkContainer.appendChild(span);
   });
+
+  strong.appendChild(linkContainer);
+  content.appendChild(strong);
 };
 
 window.addEventListener('load', loadDashboard);
