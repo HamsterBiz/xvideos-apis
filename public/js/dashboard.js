@@ -1,4 +1,8 @@
 const content = document.querySelector('.content');
+const back = document.querySelector('.back');
+const next = document.querySelector('.next');
+
+let page = 1;
 
 const renderVideo = (json) => {
   console.log(json);
@@ -95,7 +99,6 @@ const getVideoDetails = async (e) => {
 };
 
 const loadDashboard = async () => {
-
   const spinners = document.createElement('div');
   spinners.innerHTML = `<div id="spinners">
   <div class="spinner-grow text-primary" role="status">
@@ -128,8 +131,22 @@ const loadDashboard = async () => {
 
   content.appendChild(spinners);
 
-  const response = await fetch('/api/dashboard');
+  const data = {
+    page,
+  };
+
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  };
+
+  const response = await fetch('/api/dashboard', options);
   const json = await response.json();
+
+  console.log(json);
 
   const { videos } = json;
 
@@ -154,3 +171,14 @@ const loadDashboard = async () => {
 };
 
 window.addEventListener('load', loadDashboard);
+back.addEventListener('click', () => {
+  if (page > 0) {
+    page -= 1;
+    loadDashboard();
+  }
+});
+
+next.addEventListener('click', () => {
+  page += 1;
+  loadDashboard();
+});

@@ -141,6 +141,8 @@ const search = async () => {
   const response = await fetch('/api/search', options);
   const json = await response.json();
 
+  console.log(json);
+
   renderResult(json);
 };
 

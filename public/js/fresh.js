@@ -2,6 +2,8 @@ const content = document.querySelector('.content');
 const back = document.querySelector('.back');
 const next = document.querySelector('.next');
 
+let page = 1;
+
 const renderVideo = (json) => {
   const videoDiv = document.createElement('div');
   videoDiv.className = 'one_video';
@@ -100,8 +102,22 @@ const getVideoDetails = async (e) => {
 const loadVideos = async () => {
   loadSpinners();
 
-  const response = await fetch('/api/fresh');
+  const data = { page };
+
+  console.log(`Looking for ${page}`);
+
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  };
+
+  const response = await fetch('/api/fresh', options);
   const json = await response.json();
+
+  console.log(json);
 
   const { videos } = json;
 
@@ -126,11 +142,15 @@ const loadVideos = async () => {
 };
 
 const handleBack = () => {
-  console.log('Back button pressed.');
+  if (page > 0) {
+    page -= 1;
+    loadVideos();
+  }
 };
 
 const handleNext = () => {
-  console.log('Next button pressed.');
+  page += 1;
+  loadVideos();
 };
 
 window.addEventListener('load', loadVideos);

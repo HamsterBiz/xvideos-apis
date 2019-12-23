@@ -1,4 +1,8 @@
 const content = document.querySelector('.content');
+const back = document.querySelector('.back');
+const next = document.querySelector('.next');
+
+let page = 1;
 
 const renderVideo = (json) => {
   const videoDiv = document.createElement('div');
@@ -98,14 +102,27 @@ const getVideoDetails = async (e) => {
 };
 
 const loadBest = async () => {
+  content.innerHTML = '';
   loadSpinners();
 
-  const response = await fetch('/api/best');
+  const data = { page };
+
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  };
+
+  const response = await fetch('/api/best', options);
   const json = await response.json();
 
-  const { videos } = json;
-
   content.innerHTML = '';
+
+  console.log(json);
+
+  const { videos } = json;
 
   videos.forEach((video, index) => {
     const container = document.createElement('div');
@@ -126,3 +143,14 @@ const loadBest = async () => {
 };
 
 window.addEventListener('load', loadBest);
+back.addEventListener('click', () => {
+  if (page > 0) {
+    page += 1;
+    loadBest();
+  }
+});
+
+next.addEventListener('click', () => {
+  page += 1;
+  loadBest();
+});

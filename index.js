@@ -38,18 +38,25 @@ app.post('/api/details', async (req, res) => {
   res.json(details);
 });
 
-app.get('/api/best', async (req, res) => {
-  const bestList = await xvideos.videos.best({ year: '2019', month: '12', page: 1 });
+app.post('/api/best', async (req, res) => {
+  const year = new Date().getFullYear();
+  const month = new Date().getMonth();
+
+  const { page } = req.body;
+
+  const bestList = await xvideos.videos.best({ year, month, page });
   res.json(bestList);
 });
 
-app.get('/api/dashboard', async (req, res) => {
-  const dashboardList = await xvideos.videos.dashboard({ page: 1 });
+app.post('/api/dashboard', async (req, res) => {
+  const { page } = req.body;
+  const dashboardList = await xvideos.videos.dashboard({ page });
   res.send(dashboardList);
 });
 
-app.get('/api/fresh', async (req, res) => {
-  const fresh = await xvideos.videos.fresh({ page: 1 });
+app.post('/api/fresh', async (req, res) => {
+  const { page } = req.body;
+  const fresh = await xvideos.videos.fresh({ page });
   res.json(fresh);
 });
 
