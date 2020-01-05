@@ -17,10 +17,9 @@
     "eslint-plugin-import": "^2.19.1"
   },
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
-  "author": "",
+  "author": "Kananelo Maxwell",
   "license": "ISC"
 }
