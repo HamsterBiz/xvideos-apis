@@ -18,7 +18,7 @@
 - [x] Loading spinners while waiting
 - [x] Fetch data videos from server
   - [ ] Load thumbnails of those videos
-- [ ] Page through the videos
+- [ ] Page through videos
 - [x] Search for videos
 - [x] Add other pages e.g dashboard, fresh and best
 - [x] Play and display details

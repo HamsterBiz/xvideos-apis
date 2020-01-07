@@ -23,13 +23,40 @@ const getBestVideos = async (req) => {
 };
 
 const getDashboardVideos = async (page) => {
-  const response = await xvideos.videos.dashboard({ page });
+  const response = await xvideos.videos.dashboard(page);
   return response;
 };
 
-const getFreshVideos = async (page) => {
-  const response = await xvideos.videos.fresh({ page });
-  return response;
+const getFreshVideos = async (options) => {
+  const { next, page, previous } = options;
+  console.log(next, page, previous);
+
+  if (!next && !previous) {
+    const response = await xvideos.videos.fresh({ page: 1 });
+    return response;
+  }
+
+  if (!next && previous) {
+    const response = await xvideos.videos.fresh({ page });
+    if (response.hasPrevious()) {
+      const videos = await response.previous();
+      return videos;
+    }
+
+    console.log('Previous page not found');
+  }
+
+  if (next && !previous) {
+    const response = await xvideos.videos.fresh({ page });
+    if (response.hasNext()) {
+      const videos = await response.next();
+      return videos;
+    }
+
+    console.log('Next page could not be found!');
+  }
+  // const response = await xvideos.videos.fresh({ page });
+  // return response;
 };
 
 module.exports.getBestVideos = getBestVideos;

@@ -21,7 +21,7 @@ app.post('/api/search', async (req, res) => {
 });
 
 app.post('/api/details', async (req, res) => {
-  const response = await xvideos.getVideoDetais(req.body.url);
+  const response = await xvideos.getVideoDetais(req.body);
   res.json(response);
 });
 
@@ -37,7 +37,7 @@ app.post('/api/dashboard', async (req, res) => {
 });
 
 app.post('/api/fresh', async (req, res) => {
-  const response = await xvideos.getFreshVideos(req.body.page);
+  const response = await xvideos.getFreshVideos(req.body);
   res.json(response);
 });
 

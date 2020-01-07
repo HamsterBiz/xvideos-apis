@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/extensions
-import { loadSpinners, renderResult } from './UI.js';
+import { loadSpinners, renderResult, renderVideo } from './UI.js';
 
 const content = document.querySelector('.content');
 
@@ -12,9 +12,10 @@ let currentPage = 1;
  * @param {*} url path to get
  * @param {*} options passed along with the url
  */
-const fetchData = async (url, options = {}) => {
+const fetchData = async (url, options) => {
   const response = await fetch(url, options);
-  return response.json();
+  const json = await response.json();
+  return json;
 };
 
 /**
@@ -45,11 +46,11 @@ export const getVideoDetails = async (element) => {
 
   loadSpinners(content);
 
-  const videoUrl = element.target.href;
+  const options = createOptions({ url: element.target.href });
 
-  const options = createOptions({ url: videoUrl });
+  const json = await fetchData('/api/details', options);
 
-  return fetchData('/api/details', options);
+  renderVideo(json, content);
 };
 
 /**
@@ -76,34 +77,6 @@ const createVideoList = (json, parentElement) => {
 };
 
 /**
- * This function loads the fresh video
- */
-export const loadFreshVideos = async () => {
-  loadSpinners(content);
-
-  const data = { page: currentPage };
-
-  // eslint-disable-next-line no-console
-  console.log(data);
-
-  const options = createOptions(data);
-
-  const json = await fetchData('/api/fresh', options);
-
-  document.querySelector('.content').innerHTML = '';
-
-  const linkContainer = document.createElement('p');
-  const strong = document.createElement('strong');
-
-  linkContainer.className = 'video';
-
-  createVideoList(json, linkContainer);
-
-  strong.appendChild(linkContainer);
-  content.appendChild(strong);
-};
-
-/**
  * This functions allows a user to search videos
  * on the xvideos api.
  */
@@ -123,13 +96,41 @@ export const search = async () => {
 };
 
 /**
+ * This function loads the fresh video
+ */
+const loadFreshVideos = async (paging) => {
+  loadSpinners(content);
+
+  // eslint-disable-next-line no-console
+  console.log(paging);
+
+  const options = createOptions(paging);
+
+  const json = await fetchData('/api/fresh', options);
+
+  console.log(json.videos);
+
+  document.querySelector('.content').innerHTML = '';
+
+  const linkContainer = document.createElement('p');
+  const strong = document.createElement('strong');
+
+  linkContainer.className = 'video';
+
+  createVideoList(json, linkContainer);
+
+  strong.appendChild(linkContainer);
+  content.appendChild(strong);
+};
+
+/**
  * This function load best videos.
  */
-export const loadBest = async () => {
+const loadBestVideos = async (paging) => {
   content.innerHTML = '';
-  loadSpinners();
+  loadSpinners(content);
 
-  const options = createOptions({ page: currentPage });
+  const options = createOptions(paging);
 
   const json = await fetchData('/api/best', options);
 
@@ -141,7 +142,7 @@ export const loadBest = async () => {
 /**
  * This function loads dashboard vides
  */
-export const loadDashboard = async () => {
+const loadDashboard = async () => {
   loadSpinners(content);
 
   const options = createOptions({ page: currentPage });
@@ -163,10 +164,10 @@ export const loadDashboard = async () => {
  * This function increments the page
  *  and shows videos on that page
  */
-export const handleBack = () => {
+export const loadPrevious = () => {
   if (currentPage > 0) {
+    loadFreshVideos({ next: false, page: currentPage, previous: true });
     currentPage -= 1;
-    loadFreshVideos();
   }
 };
 
@@ -174,7 +175,19 @@ export const handleBack = () => {
  * This function decrements the page
  *  and shows videos on that page
  */
-export const handleNext = () => {
+export const loadNext = () => {
+  loadFreshVideos({ next: true, page: currentPage, previous: false });
   currentPage += 1;
-  loadFreshVideos();
+};
+
+export const loadCurrentFresh = () => {
+  loadFreshVideos({ next: false, page: currentPage, previous: false });
+};
+
+export const loadCurrentBest = () => {
+  loadBestVideos({ next: false, page: currentPage, previous: false });
+};
+
+export const loadCurrentDashboard = () => {
+  loadDashboard({ next: false, page: currentPage, previous: false });
 };
