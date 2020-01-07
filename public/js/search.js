@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/extensions
-import { search } from './xvideos.js';
+import { search } from './helpers/xvideos.js';
 
 const button = document.querySelector('.btn');
 

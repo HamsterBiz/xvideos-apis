@@ -4,9 +4,21 @@ import { loadSpinners, renderResult } from './UI.js';
 const content = document.querySelector('.content');
 
 // eslint-disable-next-line import/no-mutable-exports
-export let page = 1;
+let page = 1;
 
-/** This function gets details about a
+/**
+ * This function fetches data from a provided
+ * url in the backend
+ * @param {*} url path to get
+ * @param {*} options passed along with the url
+ */
+const fetchData = async (url, options = {}) => {
+  const response = await fetch(url, options);
+  return response.json();
+};
+
+/**
+ * This function gets details about a
  *  a specific videos a user selected.
  * @param {*} element This is the element that is clicked on.
  */
@@ -23,6 +35,8 @@ export const getVideoDetails = async (element) => {
     url: videoUrl,
   };
 
+  // these are options to passed along
+  // to fetch function
   const options = {
     method: 'POST',
     headers: {
@@ -31,12 +45,12 @@ export const getVideoDetails = async (element) => {
     body: JSON.stringify(data),
   };
 
-  const response = await fetch('/api/details', options);
-  const json = await response.json();
-  return json;
-  // renderVideo(json);
+  return fetchData('/api/details', options);
 };
 
+/**
+ * This function loads the fresh video
+ */
 export const loadFreshVideos = async () => {
   loadSpinners(content);
 
@@ -53,8 +67,7 @@ export const loadFreshVideos = async () => {
     body: JSON.stringify(data),
   };
 
-  const response = await fetch('/api/fresh', options);
-  const json = await response.json();
+  const json = await fetchData('/api/fresh', options);
 
   const { videos } = json;
 
@@ -84,6 +97,10 @@ export const loadFreshVideos = async () => {
   content.appendChild(strong);
 };
 
+/**
+ * This functions allows a user to search videos
+ * on the xvideos api.
+ */
 export const search = async () => {
   const query = document.querySelector('.form-control').value;
   document.querySelector('.form-control').value = '';
@@ -104,12 +121,14 @@ export const search = async () => {
     body: JSON.stringify(data),
   };
 
-  const response = await fetch('/api/search', options);
-  const json = await response.json();
+  const json = await fetchData('/api/search', options);
 
   renderResult(json, getVideoDetails);
 };
 
+/**
+ * This function load best videos.
+ */
 export const loadBest = async () => {
   content.innerHTML = '';
   loadSpinners();
@@ -124,12 +143,9 @@ export const loadBest = async () => {
     body: JSON.stringify(data),
   };
 
-  const response = await fetch('/api/best', options);
-  const json = await response.json();
+  const json = await fetchData('/api/best', options);
 
   content.innerHTML = '';
-
-  console.log(json);
 
   const { videos } = json;
 
@@ -151,38 +167,11 @@ export const loadBest = async () => {
   });
 };
 
+/**
+ * This function loads dashboard vides
+ */
 export const loadDashboard = async () => {
-  const spinners = document.createElement('div');
-  spinners.innerHTML = `<div id="spinners">
-  <div class="spinner-grow text-primary" role="status">
-    <span class="sr-only">Loading...</span>
-  </div>
-  <div class="spinner-grow text-secondary" role="status">
-    <span class="sr-only">Loading...</span>
-  </div>
-  <div class="spinner-grow text-success" role="status">
-    <span class="sr-only">Loading...</span>
-  </div>
-  <div class="spinner-grow text-danger" role="status">
-    <span class="sr-only">Loading...</span>
-  </div>
-  <div class="spinner-grow text-warning" role="status">
-    <span class="sr-only">Loading...</span>
-  </div>
-  <div class="spinner-grow text-info" role="status">
-    <span class="sr-only">Loading...</span>
-  </div>
-  <div class="spinner-grow text-light" role="status">
-    <span class="sr-only">Loading...</span>
-  </div>
-  <div class="spinner-grow text-dark" role="status">
-    <span class="sr-only">Loading...</span>
-  </div>
-</div>`;
-
-  spinners.className = 'spinners';
-
-  content.appendChild(spinners);
+  loadSpinners(content);
 
   const data = {
     page,
@@ -196,23 +185,16 @@ export const loadDashboard = async () => {
     body: JSON.stringify(data),
   };
 
-  const response = await fetch('/api/dashboard', options);
-  const json = await response.json();
-
-  console.log(json);
+  const json = await fetchData('/api/dashboard', options);
 
   const { videos } = json;
 
-  spinners.remove();
+  document.getElementById('spinners').innerHTML = '';
 
   const linkContainer = document.createElement('p');
   const strong = document.createElement('strong');
 
   videos.forEach((video) => {
-    // container for each video
-    // const container = document.createElement('div');
-    // container.className = 'video';
-
     const span = document.createElement('span');
 
     // link to video
@@ -231,9 +213,9 @@ export const loadDashboard = async () => {
   content.appendChild(strong);
 };
 
-/** This function increments the page
- *  and shows videos on that particular
- *  page
+/**
+ * This function increments the page
+ *  and shows videos on that page
  */
 export const handleBack = () => {
   if (page > 0) {
@@ -242,6 +224,10 @@ export const handleBack = () => {
   }
 };
 
+/**
+ * This function decrements the page
+ *  and shows videos on that page
+ */
 export const handleNext = () => {
   page += 1;
   loadFreshVideos();
