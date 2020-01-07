@@ -13,7 +13,7 @@ const app = express();
 
 app.use(morgan('tiny'));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 app.post('/api/search', async (req, res) => {
   const response = await search.searchVideos(req.body.query);
