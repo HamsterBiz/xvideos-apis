@@ -27,12 +27,12 @@ app.post('/api/details', async (req, res) => {
 
 
 app.post('/api/best', async (req, res) => {
-  const response = await xvideos.getBestVideos(req);
+  const response = await xvideos.getBestVideos(req.body);
   res.json(response);
 });
 
 app.post('/api/dashboard', async (req, res) => {
-  const response = await xvideos.getDashboardVideos(req.body.page);
+  const response = await xvideos.getDashboardVideos(req.body);
   res.json(response);
 });
 

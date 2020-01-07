@@ -1,38 +1,96 @@
 const xvideos = require('@rodrigogs/xvideos');
 
-const getVideoDetais = async (url) => {
+/**
+ * This function returns details about
+ * a video at a specific url
+ * @param { * } url This is the video to look for.
+ */
+module.exports.getVideoDetais = async (url) => {
   const response = await xvideos.videos.details(url);
   return response;
 };
 
-const getBestVideos = async (req) => {
-  const { page } = req.body;
-  let response;
+/**
+ * This function returns best videos from
+ * xvideos.
+ * @param options These specifies dates and pages
+ */
+// eslint-disable-next-line consistent-return
+module.exports.getBestVideos = async (options) => {
+  const {
+    next,
+    previous,
+    year,
+    month,
+    page,
+  } = options;
 
-  if (req.body.month || req.body.year) {
-    const { year, month } = req.body;
-    response = await xvideos.videos.best({ year, month, page });
-  } else {
-    const year = new Date().getFullYear();
-    const month = new Date().getMonth();
-
-    response = await xvideos.videos.best({ year, month, page });
+  if (!next || !previous) {
+    const videos = await xvideos.videos.best({ year, month, page });
+    return videos;
   }
 
-  return response;
+  if (!next || previous) {
+    const response = await xvideos.videos.best({ year, month, page });
+    if (response.hasPrevious()) {
+      const videos = await response.previous();
+      return videos;
+    }
+  }
+
+  if (next || !previous) {
+    const response = await xvideos.videos.best({ year, month, page });
+    if (response.hasNext()) {
+      const videos = await response.next();
+      return videos;
+    }
+  }
 };
 
-const getDashboardVideos = async (page) => {
-  const response = await xvideos.videos.dashboard(page);
-  return response;
-};
 
-const getFreshVideos = async (options) => {
+/**
+ * This function gets dashboard videos
+ * from xvideos
+ * @param {*} options these determines which page
+ * to look for
+ */
+// eslint-disable-next-line consistent-return
+module.exports.getDashboardVideos = async (options) => {
   const { next, page, previous } = options;
-  console.log(next, page, previous);
 
   if (!next && !previous) {
-    const response = await xvideos.videos.fresh({ page: 1 });
+    const videos = await xvideos.videos.dashboard(page);
+    return videos;
+  }
+
+  if (!next && previous) {
+    const response = await xvideos.videos.dashboard(page);
+    if (response.hasPrevious()) {
+      const videos = await response.previous();
+      return videos;
+    }
+  }
+
+  if (previous && !next) {
+    const response = await xvideos.videos.dashboard(page);
+    if (response.hasNext()) {
+      const videos = await response.next();
+      return videos;
+    }
+  }
+};
+
+/**
+ * This function gets fresh videos from xvideos
+ * @param {*} options these determines the page
+ * that we are looking for.
+ */
+// eslint-disable-next-line consistent-return
+module.exports.getFreshVideos = async (options) => {
+  const { next, page, previous } = options;
+
+  if (!next && !previous) {
+    const response = await xvideos.videos.fresh({ page });
     return response;
   }
 
@@ -43,7 +101,7 @@ const getFreshVideos = async (options) => {
       return videos;
     }
 
-    console.log('Previous page not found');
+    return 'not found';
   }
 
   if (next && !previous) {
@@ -53,13 +111,6 @@ const getFreshVideos = async (options) => {
       return videos;
     }
 
-    console.log('Next page could not be found!');
+    return 'not found';
   }
-  // const response = await xvideos.videos.fresh({ page });
-  // return response;
 };
-
-module.exports.getBestVideos = getBestVideos;
-module.exports.getDashboardVideos = getDashboardVideos;
-module.exports.getVideoDetais = getVideoDetais;
-module.exports.getFreshVideos = getFreshVideos;

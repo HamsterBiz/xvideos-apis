@@ -86,7 +86,7 @@ export const search = async () => {
 
   document.querySelector('.content').innerHTML = '';
 
-  loadSpinners();
+  loadSpinners(content);
 
   const options = createOptions({ query: phrase });
 
@@ -185,7 +185,15 @@ export const loadCurrentFresh = () => {
 };
 
 export const loadCurrentBest = () => {
-  loadBestVideos({ next: false, page: currentPage, previous: false });
+  const year = new Date().getFullYear();
+  const month = new Date().getMonth() + 1;
+  loadBestVideos({
+    next: false,
+    page: currentPage,
+    previous: false,
+    year,
+    month,
+  });
 };
 
 export const loadCurrentDashboard = () => {
