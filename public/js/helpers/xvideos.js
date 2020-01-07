@@ -4,17 +4,33 @@ import { loadSpinners, renderResult } from './UI.js';
 const content = document.querySelector('.content');
 
 // eslint-disable-next-line import/no-mutable-exports
-let page = 1;
+let currentPage = 1;
 
 /**
  * This function fetches data from a provided
- * url in the backend
+ * url in the backend along with the options
  * @param {*} url path to get
  * @param {*} options passed along with the url
  */
 const fetchData = async (url, options = {}) => {
   const response = await fetch(url, options);
   return response.json();
+};
+
+/**
+ * These options are used to create
+ * a post request on the server.
+ * @param {*} data This is the data to be passed along
+ * with the post request.
+ */
+const createOptions = (data) => {
+  const options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  };
+
+  return options;
 };
 
 /**
@@ -31,54 +47,19 @@ export const getVideoDetails = async (element) => {
 
   const videoUrl = element.target.href;
 
-  const data = {
-    url: videoUrl,
-  };
-
-  // these are options to passed along
-  // to fetch function
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  };
+  const options = createOptions({ url: videoUrl });
 
   return fetchData('/api/details', options);
 };
 
 /**
- * This function loads the fresh video
+ * This function appends videos to an
+ *  existing parent element.
+ * @param {*} json This is the data with videos
+ * @param {*} parentElement  This is an element to append videos.
  */
-export const loadFreshVideos = async () => {
-  loadSpinners(content);
-
-  const data = { page };
-
-  // eslint-disable-next-line no-console
-  console.log(data);
-
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  };
-
-  const json = await fetchData('/api/fresh', options);
-
-  const { videos } = json;
-
-  document.querySelector('.content').innerHTML = '';
-
-  const linkContainer = document.createElement('p');
-  const strong = document.createElement('strong');
-
-  linkContainer.className = 'video';
-
-  videos.forEach((video) => {
+const createVideoList = (json, parentElement) => {
+  json.videos.forEach((video) => {
     const span = document.createElement('span');
 
     // link to video
@@ -90,8 +71,33 @@ export const loadFreshVideos = async () => {
     name.addEventListener('click', getVideoDetails);
 
     span.appendChild(name);
-    linkContainer.appendChild(span);
+    parentElement.appendChild(span);
   });
+};
+
+/**
+ * This function loads the fresh video
+ */
+export const loadFreshVideos = async () => {
+  loadSpinners(content);
+
+  const data = { page: currentPage };
+
+  // eslint-disable-next-line no-console
+  console.log(data);
+
+  const options = createOptions(data);
+
+  const json = await fetchData('/api/fresh', options);
+
+  document.querySelector('.content').innerHTML = '';
+
+  const linkContainer = document.createElement('p');
+  const strong = document.createElement('strong');
+
+  linkContainer.className = 'video';
+
+  createVideoList(json, linkContainer);
 
   strong.appendChild(linkContainer);
   content.appendChild(strong);
@@ -102,24 +108,14 @@ export const loadFreshVideos = async () => {
  * on the xvideos api.
  */
 export const search = async () => {
-  const query = document.querySelector('.form-control').value;
+  const phrase = document.querySelector('.form-control').value;
   document.querySelector('.form-control').value = '';
 
   document.querySelector('.content').innerHTML = '';
 
   loadSpinners();
 
-  const data = {
-    query,
-  };
-
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  };
+  const options = createOptions({ query: phrase });
 
   const json = await fetchData('/api/search', options);
 
@@ -133,38 +129,13 @@ export const loadBest = async () => {
   content.innerHTML = '';
   loadSpinners();
 
-  const data = { page };
-
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  };
+  const options = createOptions({ page: currentPage });
 
   const json = await fetchData('/api/best', options);
 
   content.innerHTML = '';
 
-  const { videos } = json;
-
-  videos.forEach((video, index) => {
-    const container = document.createElement('div');
-    container.className = 'video';
-
-    const name = document.createElement('a');
-    name.href = video.url;
-    name.text = `[${index + 1}] - ${video.title}`;
-    name.addEventListener('click', getVideoDetails);
-
-    const duration = document.createElement('p');
-    duration.innerHTML = video.duration;
-
-    container.appendChild(name);
-
-    content.appendChild(container);
-  });
+  createVideoList(json, content);
 };
 
 /**
@@ -173,41 +144,16 @@ export const loadBest = async () => {
 export const loadDashboard = async () => {
   loadSpinners(content);
 
-  const data = {
-    page,
-  };
-
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  };
+  const options = createOptions({ page: currentPage });
 
   const json = await fetchData('/api/dashboard', options);
-
-  const { videos } = json;
 
   document.getElementById('spinners').innerHTML = '';
 
   const linkContainer = document.createElement('p');
   const strong = document.createElement('strong');
 
-  videos.forEach((video) => {
-    const span = document.createElement('span');
-
-    // link to video
-    const name = document.createElement('a');
-    name.text = video.title;
-    name.className = 'video';
-    name.href = video.url;
-    name.target = '__blank';
-    name.addEventListener('click', getVideoDetails);
-
-    span.appendChild(name);
-    linkContainer.appendChild(span);
-  });
+  createVideoList(json, linkContainer);
 
   strong.appendChild(linkContainer);
   content.appendChild(strong);
@@ -218,8 +164,8 @@ export const loadDashboard = async () => {
  *  and shows videos on that page
  */
 export const handleBack = () => {
-  if (page > 0) {
-    page -= 1;
+  if (currentPage > 0) {
+    currentPage -= 1;
     loadFreshVideos();
   }
 };
@@ -229,6 +175,6 @@ export const handleBack = () => {
  *  and shows videos on that page
  */
 export const handleNext = () => {
-  page += 1;
+  currentPage += 1;
   loadFreshVideos();
 };

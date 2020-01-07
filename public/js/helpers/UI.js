@@ -25,7 +25,11 @@ const spinner = `<div id="spinners">
 </div>
 </div>`;
 
-// eslint-disable-next-line import/prefer-default-export
+/**
+ * This function renders a video on the screen.
+ * @param {*} json this contains videos details
+ * @param {*} parentElement this is the element to be appended upon
+ */
 export const renderVideo = (json, parentElement) => {
   const videoDiv = document.createElement('div');
   videoDiv.className = 'one_video';
@@ -60,6 +64,11 @@ export const renderVideo = (json, parentElement) => {
   parentElement.appendChild(videoDiv);
 };
 
+/**
+ * This function appends spinners to
+ * a provided parent element.
+ * @param {*} parentElement element to append spinners
+ */
 export const loadSpinners = (parentElement) => {
   const spinners = document.createElement('div');
   spinners.innerHTML = spinner;
@@ -69,6 +78,11 @@ export const loadSpinners = (parentElement) => {
   parentElement.appendChild(spinners);
 };
 
+/**
+ * Its unclear what this function is doing.
+ * @param {*} json data to work with
+ * @param {*} getVideoDetails a function to be called
+ */
 export const renderResult = (json, getVideoDetails) => {
   document.querySelector('.content').innerHTML = '';
 
